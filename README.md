@@ -15,6 +15,7 @@ Folder structure is simple, you only need to run the script `dlcran.py` and it w
 - `requests`
 - `beautifulsoup4`
 - `concurrent.futures`
+```
 
 
 Enjoy.
