@@ -57,10 +57,10 @@ jobs:
     #     git lfs track "dox.tar.gz"
     #     git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
 
-    - name: Add and commit compressed file
+    - name: Add and commit changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "Auto-update CRAN documentation with compressed folder"
         commit_user_name: "vjvelascorios (GithubActions)"
         commit_author_email: "github-actions@github.com"
-        file_pattern: "dox.tar.gz"
+        
