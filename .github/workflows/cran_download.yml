@@ -1,8 +1,24 @@
+# This GitHub Actions workflow is named "Download CRAN Documentation".
+# It is triggered by two events:
+# 1. A scheduled cron job that runs every Saturday at midnight UTC.
+# 2. A push event to the main branch.
+#
+# The workflow consists of a single job named "download-cran" that runs on the latest Ubuntu environment.
+# The job has the following steps:
+# 1. Checkout the repository using the actions/checkout@v2 action.
+# 2. Set up Python using the actions/setup-python@v2 action, specifying Python version 3.x.
+# 3. Install dependencies listed in the requirements.txt file.
+# 4. Run a Python script named dlcran.py.
+# 5. Compress the `dox` folder into a tar.gz file.
+# 6. Configure Git LFS (Large File Storage) to track the compressed file.
+# 7. Add and commit the compressed file to the repository using the stefanzweifel/git-auto-commit-action@v5 action.
+#    The commit message is "Auto-update CRAN documentation with compressed folder", and the commit is made with
+#    the user name "vjvelascorios (GithubActions)" and the email "github-actions@github.com".
 name: Download CRAN Documentation
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Ejecutar diariamente a medianoche UTC
+    - cron: '0 0 * * 6'  # Ejecutar cada sábado a medianoche UTC
   push:
     branches:
       - main  # También se ejecuta cuando hay un push a la rama principal
