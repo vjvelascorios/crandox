@@ -1,43 +1,50 @@
 # This GitHub Actions workflow is named "Download CRAN Documentation".
-# It is triggered by two events:
+# It is triggered by three events:
 # 1. A scheduled cron job that runs every Saturday at midnight UTC.
 # 2. A push event to the main branch.
+# 3. A manual trigger using workflow_dispatch.
 #
 # The workflow consists of a single job named "download-cran" that runs on the latest Ubuntu environment.
 # The job has the following steps:
-# 1. Checkout the repository using the actions/checkout@v2 action.
-# 2. Set up Python using the actions/setup-python@v2 action, specifying Python version 3.x.
+# 1. Checkout the repository using the actions/checkout@v3 action, with Git LFS enabled and fetch-depth set to 0.
+# 2. Set up Python using the actions/setup-python@v4 action, specifying Python version 3.10 and enabling pip cache.
 # 3. Install dependencies listed in the requirements.txt file.
 # 4. Run a Python script named dlcran.py.
-# 5. Compress the `dox` folder into a tar.gz file.
+# 5. Compress the `dox` folder into a tar.gz file and remove the original folder.
 # 6. Configure Git LFS (Large File Storage) to track the compressed file.
-# 7. Add and commit the compressed file to the repository using the stefanzweifel/git-auto-commit-action@v5 action.
-#    The commit message is "Auto-update CRAN documentation with compressed folder", and the commit is made with
-#    the user name "vjvelascorios (GithubActions)" and the email "github-actions@github.com".
+# 7. Configure Git for large files.
+# 8. Add and commit the compressed file to the repository using the stefanzweifel/git-auto-commit-action@v5 action.
+#    The commit message is "chore: update CRAN documentation [skip ci]", and the commit is made with
+#    the user name "GitHub Actions" and the email "github-actions[bot]@users.noreply.github.com".
 name: Download CRAN Documentation
 
 on:
   schedule:
-    - cron: '0 0 * * 6'  # Ejecutar cada sábado a medianoche UTC
+    - cron: '0 0 * * 6'  # Run every Saturday at midnight UTC
   push:
     branches:
-      - main  # También se ejecuta cuando hay un push a la rama principal
+      - main
+  workflow_dispatch:  # Allow manual triggers
 
 jobs:
   download-cran-documentation:
     runs-on: ubuntu-latest
-
+    
     permissions:
       contents: write
-
+      
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+        fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.10'
+        cache: 'pip'
 
     - name: Install dependencies
       run: |
@@ -47,20 +54,32 @@ jobs:
     - name: Run script
       run: python dlcran.py
 
-    # - name: Compress `dox` folder
+    # - name: Compress documentation
     #   run: |
-    #     tar -czf dox.tar.gz dox
+    #     tar -czf dox.tar.gz dox/
+    #     rm -rf dox/
 
-    - name: Configure Git
+    - name: Setup Git LFS
       run: |
-        git config --global http.postBuffer 524288000 
-    #     git lfs install
-    #     git lfs track "dox.tar.gz"
-    #     git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
+        git lfs install
+        git lfs track "*.tar.gz"
+        git add .gitattributes
 
-    - name: Add and commit changes
+    - name: Configure Git for large files
+      run: |
+        git config --global http.postBuffer 524288000
+        git config --global http.maxRequestBuffer 524288000
+        git config --global core.compression 9
+        git config --global core.bigFileThreshold 524288000
+
+    - name: Commit and push changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        commit_message: "Auto-update CRAN documentation with compressed folder"
-        commit_user_name: "vjvelascorios (GithubActions)"
-        commit_author_email: "github-actions@github.com"
+        commit_message: "chore: update CRAN documentation [skip ci]"
+        commit_user_name: "GitHub Actions"
+        commit_user_email: "github-actions[bot]@users.noreply.github.com"
+        push_options: '--force'
+        # file_pattern: 'dox.tar.gz .gitattributes'
+        create_branch: false
+        skip_dirty_check: true
+        skip_fetch: true
