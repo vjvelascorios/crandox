@@ -39,14 +39,16 @@ soup = BeautifulSoup(r.text, 'html.parser')
 packages = [a.text for a in soup.find_all('a')]
 print('Total packages:', len(packages))
 
+# Create a set of already downloaded packages
+downloaded_packages = {f[:-4] for f in os.listdir('dox') if f.endswith('.pdf')}
+
 def download_package(package):
-    print('Processing:', package)
-    pdf_path = f'dox/{package}.pdf'
-    
-    # Check if the PDF already exists
-    if os.path.exists(pdf_path):
+    if package in downloaded_packages:
         print(f'{package}.pdf already exists, skipping download.')
         return
+    
+    print('Processing:', package)
+    pdf_path = f'dox/{package}.pdf'
     
     url = f'https://cran.r-project.org/web/packages/{package}/'
     r = requests.get(url)
@@ -66,5 +68,3 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
     executor.map(download_package, packages)
 
 print('Done')
-
-
