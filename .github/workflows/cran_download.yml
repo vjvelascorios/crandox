@@ -24,7 +24,7 @@ on:
       - main  # También se ejecuta cuando hay un push a la rama principal
 
 jobs:
-  download-cran documentation:
+  download-cran-documentation:
     runs-on: ubuntu-latest
 
     permissions:
