@@ -21,31 +21,30 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'  # Usa la versión de Python que necesites
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        # pip install requests beautifulsoup4
         pip install -r requirements.txt
 
     - name: Run script
       run: python dlcran.py
 
-    - name: Commit changes
+    - name: Compress `dox` folder
+      run: |
+        tar -czf dox.tar.gz dox
+
+    - name: Configure Git LFS
+      run: |
+        git lfs install
+        git lfs track "dox.tar.gz"
+        git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
+
+    - name: Add and commit compressed file
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        commit_message: "Auto-update CRAN documentation"
+        commit_message: "Auto-update CRAN documentation with compressed folder"
         commit_user_name: "vjvelascorios (GithubActions)"
-
-   
-   
-   
-        # run: |
-      #   git config --global user.name 'github-actions[bot]'
-      #   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      #   git add .
-      #   git commit -m 'Auto-update CRAN documentation'
-      #   git push
-      # env:
-      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        commit_author_email: "github-actions@github.com"
+        file_pattern: "dox.tar.gz"
