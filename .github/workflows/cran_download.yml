@@ -51,8 +51,9 @@ jobs:
     #   run: |
     #     tar -czf dox.tar.gz dox
 
-    # - name: Configure Git LFS
-    #   run: |
+    - name: Configure Git
+      run: |
+        git config --global http.postBuffer 524288000 
     #     git lfs install
     #     git lfs track "dox.tar.gz"
     #     git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
@@ -63,4 +64,3 @@ jobs:
         commit_message: "Auto-update CRAN documentation with compressed folder"
         commit_user_name: "vjvelascorios (GithubActions)"
         commit_author_email: "github-actions@github.com"
-        
