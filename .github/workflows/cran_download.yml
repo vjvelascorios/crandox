@@ -24,7 +24,7 @@ on:
       - main  # También se ejecuta cuando hay un push a la rama principal
 
 jobs:
-  download-cran:
+  download-cran documentation:
     runs-on: ubuntu-latest
 
     permissions:
@@ -47,15 +47,15 @@ jobs:
     - name: Run script
       run: python dlcran.py
 
-    - name: Compress `dox` folder
-      run: |
-        tar -czf dox.tar.gz dox
+    # - name: Compress `dox` folder
+    #   run: |
+    #     tar -czf dox.tar.gz dox
 
-    - name: Configure Git LFS
-      run: |
-        git lfs install
-        git lfs track "dox.tar.gz"
-        git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
+    # - name: Configure Git LFS
+    #   run: |
+    #     git lfs install
+    #     git lfs track "dox.tar.gz"
+    #     git add .gitattributes  # Añade el archivo de configuración de LFS al repositorio
 
     - name: Add and commit compressed file
       uses: stefanzweifel/git-auto-commit-action@v5
