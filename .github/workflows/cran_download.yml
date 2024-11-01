@@ -11,6 +11,9 @@ jobs:
   download-cran:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -28,3 +31,21 @@ jobs:
 
     - name: Run script
       run: python dlcran.py
+
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Auto-update CRAN documentation"
+        commit_user_name: "vjvelascorios (GithubActions)"
+
+   
+   
+   
+        # run: |
+      #   git config --global user.name 'github-actions[bot]'
+      #   git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      #   git add .
+      #   git commit -m 'Auto-update CRAN documentation'
+      #   git push
+      # env:
+      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
