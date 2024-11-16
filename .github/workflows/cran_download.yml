@@ -54,15 +54,13 @@ jobs:
     - name: Run script
       run: python dlcran.py
 
-    # - name: Compress documentation
-    #   run: |
-    #     tar -czf dox.tar.gz dox/
-    #     rm -rf dox/
+    - name: Create .gitattributes file
+      run: echo "*.tar.gz filter=lfs diff=lfs merge=lfs -text" > .gitattributes
 
     - name: Setup Git LFS
       run: |
         git lfs install
-        # git lfs track "*.tar.gz"
+        git lfs track "*.tar.gz"
         git add .gitattributes
 
     - name: Configure Git for large files
@@ -79,7 +77,6 @@ jobs:
         commit_user_name: "GitHub Actions"
         commit_user_email: "github-actions[bot]@users.noreply.github.com"
         push_options: '--force'
-        # file_pattern: 'dox.tar.gz .gitattributes'
         create_branch: false
         skip_dirty_check: true
         skip_fetch: true
