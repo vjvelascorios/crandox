@@ -67,15 +67,6 @@ jobs:
         git config --global core.compression 9
         git config --global core.bigFileThreshold 524288000
 
-    - name: Compress files
-      run: tar -czvf cran_docs.tar.gz path/to/files
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: cran-docs
-        path: cran_docs.tar.gz
-
     - name: Commit and push changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
