@@ -67,7 +67,15 @@ jobs:
         git config --global core.compression 9
         git config --global core.bigFileThreshold 524288000
 
+    - name: Check for changes
+      run: |
+        git add -A
+        if git diff --cached --quiet; then
+          echo "no changes" > .no_changes
+        fi
+
     - name: Commit and push changes
+      if: ${{ !exists('.no_changes') }}
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "chore: update CRAN documentation [skip ci]"
