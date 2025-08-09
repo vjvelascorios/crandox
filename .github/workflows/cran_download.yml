@@ -75,5 +75,5 @@ jobs:
         commit_user_email: "github-actions[bot]@users.noreply.github.com"
         push_options: '--force'
         create_branch: false
-        skip_dirty_check: true
+        #skip_dirty_check: true
         skip_fetch: true
